@@ -53,11 +53,11 @@ class Player(GameSprite):
     def update(self):
         keys = key.get_pressed()
         if keys[K_LEFT] and self.rect.x > 5:
-            self.rect.x -= self.speed
+            self.rect.x -= self.speed +3
             self.image = transform.scale(
             image.load("gopnik_2.png"), (self.size_x, self.size_y))
         if keys[K_RIGHT] and self.rect.x < width - 80:
-            self.rect.x += self.speed
+            self.rect.x += self.speed +3
             self.image = transform.scale(
             image.load("gopnik.png"), (self.size_x, self.size_y))
         if keys[K_SPACE]:
@@ -75,7 +75,7 @@ class Player(GameSprite):
             mw.blit("gopnik_2.png", (self.rect.x, self.rect.y)) 
         if keys[K_RIGHT] and self.rect.x < width - 80:
             mw.blit("gopnik.png", (self.rect.x, self.rect.y)) '''
-            
+       
 
 
 class Pivo(GameSprite):
@@ -86,15 +86,7 @@ class Pivo(GameSprite):
             self.rect.x = randint(80, width-160)
             self.rect.y = 0
             lost_sound.play()
-class Platform(GameSprite):
-    def update(self):
-        global lost
-        self.rect.x += self.speed
-        if self.rect.y > height:
-            self.rect.x = randint(80, width-160)
-            self.rect.y = 0
-            lost += 1
-            lost_sound.play()
+
 
         
 
@@ -104,9 +96,10 @@ run = True
 finish = False
 score = 0
 goal = 10
-rel_time = False
+platformcollide = False
 
 
+platformgroup = sprite.Group()
 stonegroup = sprite.Group()
 semkigroup = sprite.Group()
 pivogroup = sprite.Group()
@@ -119,6 +112,10 @@ for i in range(0, 3):
 for i in range(0, 3):
     stone = Pivo(img_enemy, randint(0, 650), -40, 80, 100, randint(1, 3))
     stonegroup.add(stone)
+for i in range(0, 3):
+    platform = Pivo(img_platform, randint(0, 650), 400, 80, 100, 0)
+    platformgroup.add(platform)
+
 
 
 
@@ -137,12 +134,15 @@ while run:
         gopnik.update()
         gopnik.reset()
         
+        platformgroup.draw(mw)
                                      
         stonegroup.draw(mw)
 
         pivogroup.draw(mw)
 
         semkigroup.draw(mw)
+        for platform in platformgroup:
+            platform.update()
         for semki in semkigroup:
             semki.update()
         for stone in stonegroup:
@@ -158,7 +158,13 @@ while run:
             score +=1
             semki = Pivo(img_semki, randint(10, 650) ,0, 80, 100, 1)
             semkigroup.add(semki)
-            
+        if sprite.spritecollide(gopnik, platformgroup, False):
+            gopnik.speed = 0
+        else:
+            gopnik.speed = 2
+#           platformcollide = True
+ #           while platformcollide == True:
+  #              gopnik.speed = 0      
 
     if sprite.spritecollide(gopnik, stonegroup, False) or lost >= 1:
         finish = True
