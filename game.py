@@ -166,13 +166,45 @@ while run:
  #           while platformcollide == True:
   #              gopnik.speed = 0      
 
-    if sprite.spritecollide(gopnik, stonegroup, False) or lost >= 1:
-        finish = True
-        mw.blit(lose, (100, 200))
+        if sprite.spritecollide(gopnik, stonegroup, False) or lost >= 1:
+            finish = True
+            mw.blit(lose, (100, 200))
 
-    if score >= goal:
-        finish = True
-        mw.blit(win,(100, 200))
+        if score >= goal:
+            finish = True
+            mw.blit(win,(100, 200))
+    else :
+
+        finish = False
+        score = 0
+        goal = 10
+        platformcollide = False
+        for semki in semkigroup:
+            semki.kill()
+        for stone in stonegroup:
+            stone.kill()
+        for pivo in pivogroup:
+            pivo.kill()
+        for platform in platformgroup:
+            platform.kill()
+        for i in range(0, 3):
+            pivo = Pivo(img_pivo, randint(80, 650),0, 40, 100, 1)
+            pivogroup.add(pivo)
+        for i in range(0, 3):
+            semki = Pivo(img_semki, randint(10, 650) ,0, 80, 100, 1)
+            semkigroup.add(semki)
+        for i in range(0, 3):
+            stone = Pivo(img_enemy, randint(0, 650), -40, 80, 100, randint(1, 3))
+            stonegroup.add(stone)
+        for i in range(0, 3):
+            platform = Pivo(img_platform, randint(0, 650), 400, 80, 100, 0)
+            platformgroup.add(platform)
+        gopnik.rect.x = 300
+        gopnik.rect.y = height - 100
+        time.delay(3000)
+        display.update()
+    
+
 
     display.update()
     time.delay(50)
